@@ -1,5 +1,7 @@
 package com.ddapps.moo;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -93,12 +95,22 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbarlayout);
         if (id == R.id.nav_camara) {
+            toolbar.setElevation(0);
+            appBarLayout.setElevation(0);
             appBarLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
             toolbar.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
+            Drawable navIcon = toolbar.getNavigationIcon();
+            if (navIcon != null) {
+                navIcon.setColorFilter(getResources().getColor(android.R.color.black, getTheme()), PorterDuff.Mode.SRC_IN);
+            }
             replaceFragment(new Fragment1());
         } else if (id == R.id.nav_gallery) {
             appBarLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
             toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            Drawable navIcon = toolbar.getNavigationIcon();
+            if (navIcon != null) {
+                navIcon.setColorFilter(getResources().getColor(android.R.color.white, getTheme()), PorterDuff.Mode.SRC_IN);
+            }
             replaceFragment(new Fragment2());
         } else if (id == R.id.nav_slideshow) {
 
