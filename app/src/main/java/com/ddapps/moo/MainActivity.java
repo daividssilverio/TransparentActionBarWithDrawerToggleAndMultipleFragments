@@ -1,7 +1,5 @@
 package com.ddapps.moo;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -9,7 +7,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,17 +15,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private DrawerLayout drawerLayout;
+    private AppBarLayout appBarLayout;
+    private View statusBarHolder;
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
+        statusBarHolder = findViewById(R.id.statusbar_holder);
+
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -39,10 +42,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -90,40 +93,36 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.nav_camara:
+                showActionBar();
+                replaceFragment(new Fragment1());
+                break;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbarlayout);
-        if (id == R.id.nav_camara) {
-            toolbar.setElevation(0);
-            appBarLayout.setElevation(0);
-            appBarLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
-            toolbar.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
-            Drawable navIcon = toolbar.getNavigationIcon();
-            if (navIcon != null) {
-                navIcon.setColorFilter(getResources().getColor(android.R.color.black, getTheme()), PorterDuff.Mode.SRC_IN);
-            }
-            replaceFragment(new Fragment1());
-        } else if (id == R.id.nav_gallery) {
-            appBarLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-            toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-            Drawable navIcon = toolbar.getNavigationIcon();
-            if (navIcon != null) {
-                navIcon.setColorFilter(getResources().getColor(android.R.color.white, getTheme()), PorterDuff.Mode.SRC_IN);
-            }
-            replaceFragment(new Fragment2());
-        } else if (id == R.id.nav_slideshow) {
+            case R.id.nav_gallery:
+                hideActionBar();
+                replaceFragment(new Fragment2());
+                break;
 
-        } else if (id == R.id.nav_manage) {
+            case R.id.nav_slideshow:
+                hideActionBar();
+                replaceFragment(new Fragment3());
+                break;
 
-        } else if (id == R.id.nav_share) {
+            case R.id.nav_manage:
+                break;
 
-        } else if (id == R.id.nav_send) {
+            case R.id.nav_share:
+                break;
 
+            case R.id.nav_send:
+                break;
+
+            default:
+                showActionBar();
+                break;
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -133,5 +132,21 @@ public class MainActivity extends AppCompatActivity
                 .beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit();
+    }
+
+    public void openDrawer() {
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    public void hideActionBar() {
+        getSupportActionBar().hide();
+        statusBarHolder.setVisibility(View.GONE);
+        appBarLayout.setVisibility(View.GONE);
+    }
+
+    public void showActionBar() {
+        getSupportActionBar().show();
+        statusBarHolder.setVisibility(View.INVISIBLE);
+        appBarLayout.setVisibility(View.VISIBLE);
     }
 }
